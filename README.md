@@ -25,6 +25,10 @@ pip3 install numpy matplotlib
 python3 scripts/generate_data.py
 python3 scripts/run_tests.py
 
+## Demo
+
+- [Demo Video](demo/demovideo.mp4)
+- [UI Screenshot](demo/demoscreen.JPG)
 ## Author
 
 Person C — AI & Detection Logic Lead
