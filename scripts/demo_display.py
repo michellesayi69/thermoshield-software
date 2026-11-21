@@ -48,7 +48,7 @@ def show_demo(frame, title):
     plt.colorbar(im, ax=ax1, label='Temperature (°C)')
 
     # Right: result banner
-    if result == "WEAPON DETECTED":
+    if result == "THERMAL ANOMALY":
         color = '#ff4444'
     elif result == "PERSON":
         color = '#ffaa00'
@@ -80,6 +80,6 @@ np.random.seed(1)
 
 show_demo(generate_clear(), "Clear Room")
 show_demo(generate_person(), "Person")
-show_demo(generate_weapon(), "Weapon Detected")
+show_demo(generate_weapon(), "Thermal Anomaly")
 
 print("Demo complete. Check the results/ folder.")

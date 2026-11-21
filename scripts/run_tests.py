@@ -28,12 +28,12 @@ def make_frame(body_pixels=0, cold_pixels=0):
 tests = [
     ("1. Empty room",          make_frame(0, 0),     "CLEAR"),
     ("2. Person standing",     make_frame(100, 0),   "PERSON"),
-    ("3. Cold spoon on chest", make_frame(100, 20),  "WEAPON DETECTED"),
+    ("3. Cold spoon on chest", make_frame(100, 20),  "THERMAL ANOMALY"),
     ("4. Phone in pocket",     make_frame(100, 0),   "PERSON"),
-    ("5. Cold bottle at side", make_frame(100, 20),  "WEAPON DETECTED"),
+    ("5. Cold bottle at side", make_frame(100, 20),  "THERMAL ANOMALY"),
     ("6. Person too far",      make_frame(30, 0),    "CLEAR"),
     ("7. Two people",          make_frame(200, 0),   "PERSON"),
-    ("8. Backpack",            make_frame(100, 10),  "WEAPON DETECTED"),
+    ("8. Backpack",            make_frame(100, 10),  "THERMAL ANOMALY"),
 ]
 
 print("=" * 78)

@@ -13,7 +13,7 @@ MIN_COLD_PIXELS = 8
 def detect_threat(frame):
     """
     Takes 768 temperature values and returns:
-    'CLEAR', 'PERSON', or 'WEAPON DETECTED'
+    'CLEAR', 'PERSON', or 'THERMAL ANOMALY'
     """
     body_pixels = 0
     cold_pixels = 0
@@ -25,7 +25,7 @@ def detect_threat(frame):
             cold_pixels += 1
 
     if body_pixels >= MIN_BODY_PIXELS and cold_pixels >= MIN_COLD_PIXELS:
-        return "WEAPON DETECTED"
+        return "THERMAL ANOMALY"
     elif body_pixels >= MIN_BODY_PIXELS:
         return "PERSON"
     else:
@@ -48,7 +48,7 @@ def detect_threat_with_confidence(frame):
 
     if body_pixels >= MIN_BODY_PIXELS and cold_pixels >= MIN_COLD_PIXELS:
         confidence = min(100, 70 + (cold_pixels - MIN_COLD_PIXELS) * 2)
-        return "WEAPON DETECTED", confidence
+        return "THERMAL ANOMALY", confidence
     elif body_pixels >= MIN_BODY_PIXELS:
         confidence = min(100, 70 + (body_pixels - MIN_BODY_PIXELS))
         return "PERSON", confidence
