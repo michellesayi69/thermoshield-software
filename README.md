@@ -1,10 +1,10 @@
-# ThermoShield — Software Simulation
+# ThermoShield — Thermal Anomaly Detection Simulation
 
-AI-powered thermal detection prototype that classifies thermal images as weapon, person, or clear.
+A software simulation of a thermal-sensing pipeline that classifies low-resolution thermal frames as CLEAR, PERSON, or THERMAL ANOMALY. Threshold-based, no machine learning.
 
 ## Overview
 
-ThermoShield uses a threshold-based detection algorithm and a trained AI classifier to detect possible concealed metal objects on the human body.
+ThermoShield uses a rule-based, threshold-driven classifier that counts warm and cold pixels in 32 x 24 thermal frames. There is no trained model: the algorithm lives in scripts/detect_threat.py and every decision is inspectable.
 
 ## Project Structure
 
@@ -31,6 +31,6 @@ python3 scripts/run_tests.py
 - [UI Screenshot](demo/demoscreen.JPG)
 ## Author
 
-Person C — AI & Detection Logic Lead
+Michelle Sayi
 China Jiliang University
 September 2026
