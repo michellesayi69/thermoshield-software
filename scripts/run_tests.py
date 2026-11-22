@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(__file__))
-from detect_threat import detect_threat
+from detect_threat import detect_threat, BODY_TEMP_MIN, COLD_SPOT_MIN, COLD_SPOT_MAX
 
 
 def make_frame(body_pixels=0, cold_pixels=0):
@@ -40,10 +40,17 @@ print("=" * 78)
 print("THERMOSHIELD — TEST RESULTS")
 print("=" * 78)
 
+# Regression: an all-background frame (22 C) must be counted as 0 body
+# and 0 cold pixels under the algorithm's actual thresholds. This
+# catches the 25.0-vs-21.0 bug that made the diagnostic disagree with
+# detect_threat().
+assert sum(1 for t in make_frame(0, 0) if t >= BODY_TEMP_MIN) == 0
+assert sum(1 for t in make_frame(0, 0) if COLD_SPOT_MIN <= t <= COLD_SPOT_MAX) == 0
+
 passed = 0
 for name, frame, expected in tests:
-    body = sum(1 for t in frame if t >= 28.0)
-    cold = sum(1 for t in frame if 15.0 <= t <= 25.0)
+    body = sum(1 for t in frame if t >= BODY_TEMP_MIN)
+    cold = sum(1 for t in frame if COLD_SPOT_MIN <= t <= COLD_SPOT_MAX)
     result = detect_threat(frame)
     status = "PASS" if result == expected else "FAIL"
     if status == "PASS":
