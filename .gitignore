@@ -4,3 +4,10 @@ __pycache__/
 results/*.png
 results/*.zip
 data/
+# Coursework artefacts that do not belong to this project.
+# If they ever reappear in the working tree, keep them out of Git.
+scripts/Assignment3.zip
+scripts/main
+scripts/main.cpp
+scripts/stb_image.h
+scripts/image*.jpg
