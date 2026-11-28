@@ -235,68 +235,53 @@ have since been implemented, tested, and pushed:
    inside the [15, 21] °C cold band), while background-aware detection
    correctly returns PERSON.
    `scripts/run_background_tests.py` proves this with 8 tests.
+5. **Input validation** — `validate_frame` in
+   `src/thermoshield/validation.py` rejects `None`, non-numeric input,
+   frames of the wrong length or shape, and non-finite values (NaN,
+   ±inf) before any detection logic runs. Validation runs *before*
+   the `median_filter` and `background_aware` branches, so callers
+   get the validation error rather than a lower-level downstream
+   error. `scripts/run_validation_tests.py` covers 15 cases.
 
 ## Still planned
 
-5. **Adaptive thresholds** — moving-average or percentile-based
-   thresholds that track slow changes in ambient temperature.
-6. **Evaluation harness** — precision, recall, F1 and processing time
+1. **Evaluation harness** — precision, recall, F1 and processing time
    over controlled synthetic datasets with known ground-truth labels.
-7. **Input validation** — explicit checks that `classify_frame`
-   receives a frame of the correct length and numeric type.
-8. **Documentation** — `docs/architecture.md`,
+2. **Documentation** — `docs/architecture.md`,
    `docs/detection_methodology.md`, `docs/testing_and_evaluation.md`,
    `docs/limitations.md`.
 
----
+## Design decisions and deferred features
 
-## Repository structure
+**Adaptive thresholds — analysis and decision.** The initial
+future-work list proposed moving-average or percentile-based adaptive
+thresholds. Background-aware detection (implemented in commit
+`929744c`) already addresses the motivating problem — sensitivity to
+ambient temperature — by computing a per-frame background estimate
+from the median of all 768 pixel values.
 
-```
-.
-├── demo/
-│   ├── demoscreen.JPG
-│   └── demovideo.mp4
-├── results/          (generated demo outputs — gitignored)
-├── data/             (synthetic frames — gitignored, regenerated on demand)
-├── src/
-│   └── thermoshield/
-│       ├── __init__.py
-│       ├── configuration.py
-│       ├── detection.py
-│       ├── filtering.py
-│       ├── background.py
-│       ├── data_generation.py
-│       └── visualization.py
-├── scripts/
-│   ├── generate_data.py
-│   ├── run_tests.py
-│   ├── run_config_tests.py
-│   ├── run_filtering_tests.py
-│   ├── run_background_tests.py
-│   └── demo_display.py
-├── setup.py
-├── requirements.txt
-├── .gitignore
-├── LICENSE
-└── README.md
-```
+The median of 768 samples has a standard error of approximately
+1.25 × σ / √768. At typical sensor noise (σ ≈ 0.5 °C) this is
+below 0.03 °C — far smaller than any physically meaningful ambient
+fluctuation over the timescales a thermal camera operates on.
+Cross-frame smoothing would therefore add no measurable detection
+improvement over per-frame estimation.
 
----
+A stateful moving-average variant was designed and rejected on three
+grounds:
 
-## Personal contribution
+1. **No measurable benefit** — as above, the per-frame median is
+   already stable to within 0.03 °C.
+2. **API cost** — a moving-average classifier must carry state across
+   frames. The current API (`classify_frame(frame, config) -> label`)
+   is deliberately stateless: identical inputs always produce identical
+   outputs, which makes the 46-test suite reproducible without setup
+   or mocking.
+3. **Mismatch to the synthetic data model** — the generator produces
+   independent frames with no temporal sequence. There is no 'previous
+   frame' for a moving average to average over.
 
-Michelle Sayi — algorithm design, synthetic data generation, detection
-logic, test suite, documentation.
-
-The original hardware concept (ESP32-S3 + MLX90640 + OLED smart glasses)
-was developed as a group coursework exercise at China Jiliang University.
-This repository contains the software simulation as designed and
-implemented by the author and is maintained as a portfolio piece for
-MSc Computer Science applications.
-
----
-
-## License
-
-MIT License — see `LICENSE`.
+If the project moves to real MLX90640 recordings with temporal
+sequences, this decision should be revisited: a moving-average or
+Kalman filter over the background estimate would then be justified by
+a real signal-to-noise argument.
