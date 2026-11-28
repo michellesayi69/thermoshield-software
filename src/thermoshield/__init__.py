@@ -46,6 +46,7 @@ from .data_generation import (
     generate_anomaly,
 )
 from .filtering import median_filter
+from .background import estimate_background
 
 __version__ = "0.1.0"
 
@@ -67,4 +68,5 @@ __all__ = [
     "DetectionConfig",
     "DEFAULT_CONFIG",
     "median_filter",
+    "estimate_background",
 ]

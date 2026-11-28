@@ -9,19 +9,37 @@ exactly. Passing a custom config allows side-by-side comparison.
 
 from .configuration import DetectionConfig, DEFAULT_CONFIG
 from .filtering import median_filter
+from .background import estimate_background
 
 __all__ = ["classify_frame", "classify_frame_with_confidence"]
 
 
 def _count_pixels(frame, config):
-    """Return (body_pixels, cold_pixels) counted against config thresholds."""
+    """Return (body_pixels, cold_pixels) counted against config thresholds.
+
+    When config.background_aware is True, thresholds are applied to
+    (pixel - background) deltas rather than to absolute temperatures.
+    The background is estimated once per call using the median of the
+    frame (see thermoshield.background.estimate_background).
+    """
     body_pixels = 0
     cold_pixels = 0
-    for temp in frame:
-        if temp >= config.body_temp_min:
-            body_pixels += 1
-        if config.cold_spot_min <= temp <= config.cold_spot_max:
-            cold_pixels += 1
+
+    if config.background_aware:
+        background = estimate_background(frame)
+        for temp in frame:
+            delta = temp - background
+            if delta >= config.body_delta_min:
+                body_pixels += 1
+            if config.cold_delta_min <= delta <= config.cold_delta_max:
+                cold_pixels += 1
+    else:
+        for temp in frame:
+            if temp >= config.body_temp_min:
+                body_pixels += 1
+            if config.cold_spot_min <= temp <= config.cold_spot_max:
+                cold_pixels += 1
+
     return body_pixels, cold_pixels
 
 

@@ -42,6 +42,18 @@ class DetectionConfig:
     min_cold_pixels: int = MIN_COLD_PIXELS
     median_filter: bool = False  # Stage 4 sub-step 2: 3x3 median filter before detection
 
+    # Stage 4 sub-step 3: background-aware detection.
+    # When True, body/cold rules are applied to (pixel - background)
+    # deltas rather than to absolute temperatures. Defaults chosen so
+    # that at 22 C ambient the deltas reproduce the absolute baseline:
+    #   body_delta_min=6.0  -> 28 C  (= BODY_TEMP_MIN)
+    #   cold_delta_max=-1.0 -> 21 C  (= COLD_SPOT_MAX)
+    #   cold_delta_min=-7.0 -> 15 C  (= COLD_SPOT_MIN)
+    background_aware: bool = False
+    body_delta_min: float = 6.0
+    cold_delta_max: float = -1.0
+    cold_delta_min: float = -7.0
+
     def __post_init__(self):
         if self.cold_spot_min >= self.cold_spot_max:
             raise ValueError(
@@ -61,6 +73,16 @@ class DetectionConfig:
         if self.min_cold_pixels < 0:
             raise ValueError(
                 f"min_cold_pixels must be >= 0, got {self.min_cold_pixels}"
+            )
+        if self.cold_delta_min >= self.cold_delta_max:
+            raise ValueError(
+                f"cold_delta_min ({self.cold_delta_min}) must be strictly "
+                f"less than cold_delta_max ({self.cold_delta_max})"
+            )
+        if self.body_delta_min <= self.cold_delta_max:
+            raise ValueError(
+                f"body_delta_min ({self.body_delta_min}) must be strictly "
+                f"greater than cold_delta_max ({self.cold_delta_max})"
             )
 
 
