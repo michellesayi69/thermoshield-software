@@ -47,6 +47,7 @@ from .data_generation import (
 )
 from .filtering import median_filter
 from .background import estimate_background
+from .validation import validate_frame
 
 __version__ = "0.1.0"
 
@@ -69,4 +70,5 @@ __all__ = [
     "DEFAULT_CONFIG",
     "median_filter",
     "estimate_background",
+    "validate_frame",
 ]

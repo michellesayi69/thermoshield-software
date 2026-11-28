@@ -10,6 +10,7 @@ exactly. Passing a custom config allows side-by-side comparison.
 from .configuration import DetectionConfig, DEFAULT_CONFIG
 from .filtering import median_filter
 from .background import estimate_background
+from .validation import validate_frame
 
 __all__ = ["classify_frame", "classify_frame_with_confidence"]
 
@@ -57,6 +58,7 @@ def classify_frame(frame, config=None):
     """
     if config is None:
         config = DEFAULT_CONFIG
+    frame = validate_frame(frame)
     if config.median_filter:
         frame = median_filter(frame)
     body_pixels, cold_pixels = _count_pixels(frame, config)
@@ -76,6 +78,7 @@ def classify_frame_with_confidence(frame, config=None):
     """
     if config is None:
         config = DEFAULT_CONFIG
+    frame = validate_frame(frame)
     if config.median_filter:
         frame = median_filter(frame)
     body_pixels, cold_pixels = _count_pixels(frame, config)
