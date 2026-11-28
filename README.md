@@ -285,3 +285,56 @@ If the project moves to real MLX90640 recordings with temporal
 sequences, this decision should be revisited: a moving-average or
 Kalman filter over the background estimate would then be justified by
 a real signal-to-noise argument.
+
+---
+
+## Repository structure
+
+```
+.
+├── demo/
+│   ├── demoscreen.JPG
+│   └── demovideo.mp4
+├── results/          (generated demo outputs — gitignored)
+├── data/             (synthetic frames — gitignored, regenerated on demand)
+├── src/
+│   └── thermoshield/
+│       ├── __init__.py
+│       ├── configuration.py
+│       ├── detection.py
+│       ├── filtering.py
+│       ├── background.py
+│       ├── data_generation.py
+│       └── visualization.py
+├── scripts/
+│   ├── generate_data.py
+│   ├── run_tests.py
+│   ├── run_config_tests.py
+│   ├── run_filtering_tests.py
+│   ├── run_background_tests.py
+│   └── demo_display.py
+├── setup.py
+├── requirements.txt
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+---
+
+## Personal contribution
+
+Michelle Sayi — algorithm design, synthetic data generation, detection
+logic, test suite, documentation.
+
+The original hardware concept (ESP32-S3 + MLX90640 + OLED smart glasses)
+was developed as a group coursework exercise at China Jiliang University.
+This repository contains the software simulation as designed and
+implemented by the author and is maintained as a portfolio piece for
+MSc Computer Science applications.
+
+---
+
+## License
+
+MIT License — see `LICENSE`.
