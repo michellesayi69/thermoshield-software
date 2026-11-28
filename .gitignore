@@ -11,3 +11,6 @@ scripts/main
 scripts/main.cpp
 scripts/stb_image.h
 scripts/image*.jpg
+
+# Python package build metadata (pip install -e .)
+*.egg-info/

@@ -29,7 +29,7 @@ The answer is a threshold-based classifier that counts pixels above a
 body-temperature threshold and pixels within a "cold-spot" temperature
 band, and applies two minimum-count rules. There is no neural network,
 no trained model, and no hidden state. The whole algorithm is visible
-in `scripts/detect_threat.py`.
+in `src/thermoshield/detection.py`.
 
 ---
 
@@ -59,7 +59,7 @@ A reproducible Python simulation of the detection pipeline:
    180 synthetic 32 × 24 thermal frames, split evenly across three
    scenario types (clear, person, thermal anomaly), generated
    deterministically using random seed 42.
-2. **Threshold-based detection** (`scripts/detect_threat.py`) — two
+2. **Threshold-based detection** (`src/thermoshield/detection.py`) — two
    functions: `detect_threat(frame)` returns a class label;
    `detect_threat_with_confidence(frame)` also returns a confidence
    score. Five thresholds, no machine learning.
@@ -81,7 +81,7 @@ The classifier assigns one of three labels to each frame:
 | `PERSON` | Enough warm pixels to satisfy the body rule, but fewer than `MIN_COLD_PIXELS` pixels fall inside the cold band. |
 | `THERMAL ANOMALY` | Both the body rule and the cold-spot rule are satisfied — a warm region and a distinct cold region are both present. |
 
-The five thresholds, defined at the top of `scripts/detect_threat.py`:
+The five thresholds, defined in `src/thermoshield/configuration.py`:
 
 ```python
 BODY_TEMP_MIN   = 28.0    # °C — minimum for a pixel to count as "body"
@@ -236,11 +236,19 @@ None of the items above is present in the current version.
 │   └── demovideo.mp4
 ├── results/          (generated demo outputs — gitignored)
 ├── data/             (synthetic frames — gitignored, regenerated on demand)
+├── src/
+│   └── thermoshield/
+│       ├── __init__.py
+│       ├── configuration.py
+│       ├── detection.py
+│       ├── data_generation.py
+│       └── visualization.py
 ├── scripts/
-│   ├── detect_threat.py
 │   ├── generate_data.py
 │   ├── run_tests.py
 │   └── demo_display.py
+├── setup.py
+├── requirements.txt
 ├── .gitignore
 ├── LICENSE
 └── README.md
