@@ -45,6 +45,7 @@ from .data_generation import (
     generate_person,
     generate_anomaly,
 )
+from .filtering import median_filter
 
 __version__ = "0.1.0"
 
@@ -65,4 +66,5 @@ __all__ = [
     "FRAME_SIZE",
     "DetectionConfig",
     "DEFAULT_CONFIG",
+    "median_filter",
 ]

@@ -8,6 +8,7 @@ exactly. Passing a custom config allows side-by-side comparison.
 """
 
 from .configuration import DetectionConfig, DEFAULT_CONFIG
+from .filtering import median_filter
 
 __all__ = ["classify_frame", "classify_frame_with_confidence"]
 
@@ -38,6 +39,8 @@ def classify_frame(frame, config=None):
     """
     if config is None:
         config = DEFAULT_CONFIG
+    if config.median_filter:
+        frame = median_filter(frame)
     body_pixels, cold_pixels = _count_pixels(frame, config)
     if body_pixels >= config.min_body_pixels and cold_pixels >= config.min_cold_pixels:
         return "THERMAL ANOMALY"
@@ -55,6 +58,8 @@ def classify_frame_with_confidence(frame, config=None):
     """
     if config is None:
         config = DEFAULT_CONFIG
+    if config.median_filter:
+        frame = median_filter(frame)
     body_pixels, cold_pixels = _count_pixels(frame, config)
     if body_pixels >= config.min_body_pixels and cold_pixels >= config.min_cold_pixels:
         confidence = min(100, 70 + (cold_pixels - config.min_cold_pixels) * 2)

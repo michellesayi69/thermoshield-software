@@ -40,6 +40,7 @@ class DetectionConfig:
     cold_spot_max: float = COLD_SPOT_MAX
     min_body_pixels: int = MIN_BODY_PIXELS
     min_cold_pixels: int = MIN_COLD_PIXELS
+    median_filter: bool = False  # Stage 4 sub-step 2: 3x3 median filter before detection
 
     def __post_init__(self):
         if self.cold_spot_min >= self.cold_spot_max:
