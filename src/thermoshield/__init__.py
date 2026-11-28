@@ -19,7 +19,8 @@ Data generation
 Configuration
     BODY_TEMP_MIN, COLD_SPOT_MIN, COLD_SPOT_MAX,
     MIN_BODY_PIXELS, MIN_COLD_PIXELS,
-    FRAME_WIDTH, FRAME_HEIGHT, FRAME_SIZE
+    FRAME_WIDTH, FRAME_HEIGHT, FRAME_SIZE,
+    DetectionConfig, DEFAULT_CONFIG
 """
 
 from .configuration import (
@@ -31,6 +32,8 @@ from .configuration import (
     FRAME_WIDTH,
     FRAME_HEIGHT,
     FRAME_SIZE,
+    DetectionConfig,
+    DEFAULT_CONFIG,
 )
 from .detection import (
     classify_frame,
@@ -60,4 +63,6 @@ __all__ = [
     "FRAME_WIDTH",
     "FRAME_HEIGHT",
     "FRAME_SIZE",
+    "DetectionConfig",
+    "DEFAULT_CONFIG",
 ]
