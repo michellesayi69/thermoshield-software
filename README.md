@@ -140,7 +140,10 @@ to have run first, because it constructs its test frames in memory.
 
 ```bash
 cd scripts
-python3 run_tests.py
+python3 run_tests.py              # baseline detection tests (8 tests)
+python3 run_config_tests.py       # DetectionConfig tests (7 tests)
+python3 run_filtering_tests.py    # median filter tests (8 tests)
+python3 run_background_tests.py   # background-aware tests (8 tests)
 ```
 
 Expected output:
@@ -202,28 +205,48 @@ does **not** do is part of the engineering.
 
 ---
 
-## Future work
+## Implemented since initial release
 
-Documented but **not implemented** in the current version, in order of
-expected value:
+The following were listed as future work in the initial release and
+have since been implemented, tested, and pushed:
 
-1. **Configurable thresholds** — move the five constants into a config
-   object so scenarios can be evaluated side-by-side without editing
-   the detection module.
-2. **Median filtering** — a 3 × 3 median filter applied before
-   detection, compared against the unfiltered baseline.
-3. **Background-aware detection** — estimate a background temperature
-   from the frame and apply detection relative to it, rather than
-   against absolute thresholds.
-4. **Adaptive thresholds** — moving-average or percentile-based
+1. **Package structure** — code lives in `src/thermoshield/` with thin
+   entry points in `scripts/`. `pip install --user -e .` works from any
+   directory.
+2. **Configurable thresholds** — `DetectionConfig` in
+   `src/thermoshield/configuration.py` parameterises all five
+   thresholds. Custom configurations can be compared side-by-side
+   without editing the detection module.
+3. **Median filtering** — a 3 × 3 median filter in
+   `src/thermoshield/filtering.py`, opt-in via
+   `DetectionConfig(median_filter=True)`.
+   `scripts/run_filtering_tests.py` demonstrates that enabling the
+   filter eliminates a noise-induced false positive that the baseline
+   produces (10 × 10 body region + 20 scattered cold pixels: baseline
+   calls it THERMAL ANOMALY, filtered classifier correctly calls it
+   PERSON).
+4. **Background-aware detection** —
+   `DetectionConfig(background_aware=True)` applies body and cold-spot
+   rules to (pixel − background) deltas rather than absolute
+   temperatures, where the background is the median of all 768 pixel
+   values. Directly addresses the 'Environmental sensitivity'
+   limitation: at 18 °C ambient the baseline misclassifies a
+   person-only scene as THERMAL ANOMALY (the 18 °C background falls
+   inside the [15, 21] °C cold band), while background-aware detection
+   correctly returns PERSON.
+   `scripts/run_background_tests.py` proves this with 8 tests.
+
+## Still planned
+
+5. **Adaptive thresholds** — moving-average or percentile-based
    thresholds that track slow changes in ambient temperature.
-5. **Evaluation harness** — precision, recall, F1 and processing time
+6. **Evaluation harness** — precision, recall, F1 and processing time
    over controlled synthetic datasets with known ground-truth labels.
-6. **Package structure** — move the four scripts into a proper Python
-   package (`src/thermoshield/`) with a real test directory, so each
-   stage of the future-work plan can be added without duplicating code.
-
-None of the items above is present in the current version.
+7. **Input validation** — explicit checks that `classify_frame`
+   receives a frame of the correct length and numeric type.
+8. **Documentation** — `docs/architecture.md`,
+   `docs/detection_methodology.md`, `docs/testing_and_evaluation.md`,
+   `docs/limitations.md`.
 
 ---
 
@@ -241,11 +264,16 @@ None of the items above is present in the current version.
 │       ├── __init__.py
 │       ├── configuration.py
 │       ├── detection.py
+│       ├── filtering.py
+│       ├── background.py
 │       ├── data_generation.py
 │       └── visualization.py
 ├── scripts/
 │   ├── generate_data.py
 │   ├── run_tests.py
+│   ├── run_config_tests.py
+│   ├── run_filtering_tests.py
+│   ├── run_background_tests.py
 │   └── demo_display.py
 ├── setup.py
 ├── requirements.txt
